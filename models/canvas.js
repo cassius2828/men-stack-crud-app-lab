@@ -1,14 +1,15 @@
 const mongoose = require("mongoose");
 
-const paintingSchema = new mongoose.Schema({
+const canvasSchema = new mongoose.Schema({
   style: String,
   img: String,
   mainColor: String,
   dimensions: String,
   title: String,
   description: String,
+  medium:String
 });
 
-const PaintingModel = mongoose.model("Painting", paintingSchema);
+const CanvasModel = mongoose.model("Painting", canvasSchema);
 
-module.exports = PaintingModel;
+module.exports = CanvasModel;

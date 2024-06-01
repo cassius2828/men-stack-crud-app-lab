@@ -1,7 +1,11 @@
 <%- include('../partials/meta.ejs') %>
-    <h1>show page -- painting</h1>
-
-          
+    <h1>edit page -- painting</h1>
+    <div class="show-container">
+          <form action="/canvases/<%= canvas._id %>/edit?_method=PUT" method="POST">
+        <%- include('../partials/form.ejs') %>
+            
+                <button type="submit" value="Submit">Update Your Artwork!</button>
+            </form>
     <div class="canvas-show-container">
         <div class="canvas-show-item">
             <p class="canvas-title"><%= canvas.title %></p>
@@ -11,9 +15,9 @@
             <div class="canvas-attribute">Description: <span><%= canvas.description %></span></div>
             <div class="canvas-attribute">Medium: <span><%= canvas.medium %></span></div>
         </div>
-       <a class="edit-btn" href="<%=id%>/edit" >edit</a>  
+        
     </div>
-
+    </div>
   
 </body>
 </html>

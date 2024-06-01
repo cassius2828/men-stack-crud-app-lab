@@ -1,4 +1,16 @@
 <%- include('../partials/meta.ejs') %>
     <h1>index painting page</h1>
+    <ul class="canvas-container">
+        <% allCanvases.forEach(canvas => { %>
+            <li class="canvas-item">
+                <a class="canvas-link" href="/canvases/<%= canvas._id %>"><div class="canvas-title"><%= canvas.title %></div></a>
+                <div class="canvas-attribute">Style: <span><%= canvas.style %></span></div>
+                <div class="canvas-attribute">Main Color: <span><%= canvas.mainColor %></span></div>
+                <div class="canvas-attribute">Dimensions: <span><%= canvas.dimensions %></span></div>
+                <div class="canvas-attribute">Description: <span><%= canvas.description %></span></div>
+                <div class="canvas-attribute">Medium: <span><%= canvas.medium %></span></div>
+            </li>
+        <% }) %>
+    </ul>
 </body>
 </html>

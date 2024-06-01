@@ -1,4 +1,10 @@
 <%- include('../partials/meta.ejs') %>
     <h1>new painting page -- painting</h1>
-</body>
-</html>
+    <form action="/canvases/new" method="POST">
+<%- include('../partials/form.ejs') %>
+    
+        <button type="submit" value="Submit">Create Your Artwork!</button>
+    </form>
+    </body>
+
+    </html>
