@@ -4,12 +4,17 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const path = require("path");
 const CanvasModel = require("./models/canvas");
+// openai image generator API
+
+// const openai = require("openai");
+const axios = require("axios");
 
 // server setup
 const app = e();
 // env setup
 dotenv.config();
-
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+console.log(OPENAI_API_KEY);
 ///////////////////////////
 // Connect to MongoDB
 ///////////////////////////
@@ -52,9 +57,9 @@ app.get("/canvases/new", (req, res) => {
 
 //   create new painting
 app.post("/canvases/new", async (req, res) => {
-  const newCanvasData = destructureReqBody(req.body);
+  const newCanvasData = await destructureReqBody(req.body);
   const newCanvas = await CanvasModel.create(newCanvasData);
-  // console.log(newCanvas);
+  console.log(newCanvas);
   res.redirect("/canvases");
 });
 
@@ -70,10 +75,10 @@ app.put("/canvases/:canvasID/edit", async (req, res) => {
   // console.log("test update");
   const id = req.params.canvasID;
 
-  const updatedCanvasInfo = destructureReqBody(req.body);
+  const updatedCanvasInfo = await destructureReqBody(req.body);
 
   await CanvasModel.findByIdAndUpdate(id, updatedCanvasInfo);
-  
+
   res.redirect(`/canvases/${id}`);
 });
 //   get single painting
@@ -85,10 +90,11 @@ app.get("/canvases/:canvasID", async (req, res) => {
 });
 
 // delete painting
-app.delete("/canvases/:canvasID", (req, res) => {
+app.delete("/canvases/:canvasID", async (req, res) => {
   const id = req.params.canvasID;
-  // console.log("deleted canvas --> ", id);
-  // res.redirect("/canvases");
+  const canvasToDelete = await CanvasModel.deleteOne({ _id: id });
+  console.log(canvasToDelete, "deleted canvas");
+  res.redirect("/canvases");
 });
 
 // run server
@@ -99,17 +105,81 @@ app.listen(3030, () => {
 ///////////////////////////
 // FUNCTIONS
 ///////////////////////////
-function destructureReqBody(reqBody) {
-  const { style, img, mainColor, dimensions, title, description, medium } =
-    reqBody;
-  const newCanvasData = {
+async function destructureReqBody(reqBody) {
+  const { style, mainColor, dimensions, title, description, medium } = reqBody;
+  const img = await createAiImage(
     style,
-    // img,
     mainColor,
     dimensions,
-    title,
-    description,
     medium,
-  };
-  return newCanvasData;
+    title,
+    description
+  );
+  if (img) {
+    const newCanvasData = {
+      style,
+      img,
+      mainColor,
+      dimensions,
+      title,
+      description,
+      medium,
+    };
+    return newCanvasData;
+  } else {
+    const newCanvasData = {
+      style,
+      mainColor,
+      dimensions,
+      title,
+      description,
+      medium,
+    };
+    return newCanvasData;
+  }
 }
+
+// returns image_url
+async function createAiImage(
+  style,
+  mainColor,
+  dimensions,
+  medium,
+  title,
+  description
+) {
+  const prompt = `Generate an image in the style of ${style}. The main color of the image should be ${mainColor}. The dimensions of the image should be ${dimensions} orientation. The medium used should be ${medium}. The image should be titled "${title}" and described as "${description}". Ensure the image captures the essence of the specified style, medium, and color while adhering to the given title and description.`;
+  const payload = {
+    model: "dalle-2",
+    prompt: prompt,
+    n: 1,
+    size: "1024x1024",
+  };
+  const headers = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${OPENAI_API_KEY}`,
+    },
+  };
+  try {
+    const response = await axios.post(
+      "https://api.openai.com/v1/images/generations",
+      payload,
+      headers
+    );
+    const image_url = response.data[0].url;
+    return image_url.toString();
+  } catch (error) {
+    console.log(`Error trying to generate image: `, error);
+  }
+}
+
+/*
+
+Generate an image in the style of ${style}. 
+The main color of the image should be ${mainColor}. 
+The dimensions of the image should be ${dimensions} orientation. 
+The medium used should be ${medium}. The image should be titled "${title}" and described as "${description}". Ensure the image captures the essence of the specified style, medium, 
+and color while adhering to the given title and description.
+
+*/

@@ -1,12 +1,6 @@
 <%- include('../partials/meta.ejs') %>
-    <h1>edit page -- painting</h1>
-    <div class="show-container">
-          <form action="/canvases/<%= canvas._id %>/edit?_method=PUT" method="POST">
-        <%- include('../partials/form.ejs') %>
-            
-                <button type="submit" value="Submit">Update Your Artwork!</button>
-            </form>
-    <div class="canvas-show-container">
+    <h1 class="h1 edit-view">You are editing your <span class="canvas-title"><%= canvas.title %></span> canvas</h1>
+    <div class="show-container"> <div class="canvas-show-container">
         <div class="canvas-show-item">
             <p class="canvas-title"><%= canvas.title %></p>
             <div class="canvas-attribute">Style: <span><%= canvas.style %></span></div>
@@ -14,9 +8,18 @@
             <div class="canvas-attribute">Dimensions: <span><%= canvas.dimensions %></span></div>
             <div class="canvas-attribute">Description: <span><%= canvas.description %></span></div>
             <div class="canvas-attribute">Medium: <span><%= canvas.medium %></span></div>
+            <img class="ai-img" src="<%= canvas.img %>" alt="unique ai generated image">
+
+     
         </div>
         
     </div>
+          <form action="/canvases/<%= canvas._id %>/edit?_method=PUT" method="POST">
+        <%- include('../partials/form.ejs') %>
+            
+                <button type="submit" value="Submit">Update Your Artwork!</button>
+            </form>
+   
     </div>
   
 </body>

@@ -1,21 +1,44 @@
 <%- include('../partials/meta.ejs') %>
     <h1>show page -- painting</h1>
 
-          
+
     <div class="canvas-show-container">
         <div class="canvas-show-item">
-            <p class="canvas-title"><%= canvas.title %></p>
-            <div class="canvas-attribute">Style: <span><%= canvas.style %></span></div>
-            <div class="canvas-attribute">Main Color: <span><%= canvas.mainColor %></span></div>
-            <div class="canvas-attribute">Dimensions: <span><%= canvas.dimensions %></span></div>
-            <div class="canvas-attribute">Description: <span><%= canvas.description %></span></div>
-            <div class="canvas-attribute">Medium: <span><%= canvas.medium %></span></div>
+            <p class="canvas-title">
+                <%= canvas.title %>
+            </p>
+            <div class="canvas-attribute">Style: <span>
+                    <%= canvas.style %>
+                </span></div>
+            <div class="canvas-attribute">Main Color: <span>
+                    <%= canvas.mainColor %>
+                </span></div>
+            <div class="canvas-attribute">Dimensions: <span>
+                    <%= canvas.dimensions %>
+                </span></div>
+            <div class="canvas-attribute">Description: <span>
+                    <%= canvas.description %>
+                </span></div>
+            <div class="canvas-attribute">Medium: <span>
+                    <%= canvas.medium %>
+                </span></div>
+            <img class="ai-img" src="<%= canvas.img %>" alt="unique ai generated image">
+
         </div>
-       <a class="edit-btn" href="<%=id%>/edit" >edit</a>  
+        <div class="btn-container">
+
+            <a class="btn edit" href="<%=id%>/edit">edit</a>
+            <form action="<%=id%>?_method=DELETE" method="POST">
+                <button type="submit" class="btn delete" href="<%=id%>">delete</button>
+            </form>
+
+        </div>
     </div>
 
-  
-</body>
-</html>
-</body>
-</html>
+
+    </body>
+
+    </html>
+    </body>
+
+    </html>
