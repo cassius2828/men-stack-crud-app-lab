@@ -31,7 +31,6 @@ h1 {
   text-transform: capitalize;
 }
 
-
 /* /////////////////////////// */
 /* Navigation */
 /* /////////////////////////// */
@@ -39,12 +38,21 @@ h1 {
   background-color: #222222;
   padding: 1rem 2rem;
   margin-bottom: 2rem;
-}
+  display: flex;
+  list-style-type: none;
+  justify-content: space-between;
 
+}
+.navbar .title {
+  font-size: 3rem;
+  margin-bottom: 4rem;
+}
 .nav-list {
   list-style-type: none;
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
+
+  
 }
 
 .nav-item {
@@ -117,6 +125,40 @@ button[type="submit"]:hover {
 }
 
 /* /////////////////////////// */
+/* Landing Page */
+/* /////////////////////////// */
+#landing .bg {
+  background: 
+    linear-gradient(to right, 
+      rgba(0, 0, 0, .9) 0%, 
+      rgba(0, 0, 0, .9) 20%, 
+ 
+      rgba(0, 0, 0, .8) 40%, 
+      rgba(0, 0, 0, 0.5) 60%, 
+      rgba(0, 0, 0, 0) 100%),
+    url("/images/hero-surreal.webp");
+  background-size: cover;
+  background-position: center;
+  width: 100vw;
+  height: 100svh;
+}
+#landing .text {
+  position: absolute;
+  top: 60%;
+  left: 32.5%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+
+  padding: 1.5rem;
+}
+#landing .title {
+}
+#landing .description {
+  font-size: 1.75rem;
+  line-height: 3rem;
+}
+
+/* /////////////////////////// */
 /* Canvas Show Page */
 /* /////////////////////////// */
 .canvas-show-container {
@@ -138,7 +180,12 @@ button[type="submit"]:hover {
   border-radius: 8px;
   background-color: #222222;
 }
-
+.show-container.edit {
+  display: flex; flex-direction: column-reverse; justify-content: center; align-items: center;
+}
+.show-container.edit form {
+  margin: 0;
+}
 /* /////////////////////////// */
 /* btns */
 /* /////////////////////////// */
@@ -213,7 +260,6 @@ button[type="submit"]:hover {
 .canvas-attribute {
   margin: 5px 0;
   font-size: 1.25rem;
-
 }
 
 .canvas-attribute span {
@@ -232,4 +278,13 @@ button[type="submit"]:hover {
   max-width: 100%;
   margin: auto;
   display: block;
+}
+
+
+/* MEDIA QUIERIES */
+
+@media (min-width:768px){
+  .show-container.edit {
+    display: flex; flex-direction: row; justify-content: center; 
+  }
 }

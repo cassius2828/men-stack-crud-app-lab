@@ -4,9 +4,7 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const path = require("path");
 const CanvasModel = require("./models/canvas");
-// openai image generator API
 
-// const openai = require("openai");
 const axios = require("axios");
 
 // server setup
@@ -36,6 +34,7 @@ app.use(e.urlencoded({ extended: false }));
 app.use(e.static(path.join(__dirname, "public")));
 // Override with POST having ?_method=PUT
 app.use(methodOverride("_method"));
+
 ///////////////////////////
 // Routes
 ///////////////////////////
@@ -44,16 +43,22 @@ app.use(methodOverride("_method"));
 app.get("/", (req, res) => {
   res.render("home/index.ejs");
 });
+
+
 // get all paintings
 app.get("/canvases", async (req, res) => {
   const allCanvases = await CanvasModel.find({});
   // console.log(allCanvases)
   res.render("canvas/index.ejs", { allCanvases });
 });
+
+
 //   view page of creaqting a new painting
 app.get("/canvases/new", (req, res) => {
   res.render("canvas/new.ejs");
 });
+
+
 
 //   create new painting
 app.post("/canvases/new", async (req, res) => {
@@ -63,6 +68,8 @@ app.post("/canvases/new", async (req, res) => {
   res.redirect("/canvases");
 });
 
+
+
 //   get single painting
 app.get("/canvases/:canvasID/edit", async (req, res) => {
   const id = req.params.canvasID;
@@ -70,6 +77,8 @@ app.get("/canvases/:canvasID/edit", async (req, res) => {
   // console.log(canvas);
   res.render("canvas/edit.ejs", { canvas, id });
 });
+
+
 //   update painting
 app.put("/canvases/:canvasID/edit", async (req, res) => {
   // console.log("test update");
@@ -81,6 +90,8 @@ app.put("/canvases/:canvasID/edit", async (req, res) => {
 
   res.redirect(`/canvases/${id}`);
 });
+
+
 //   get single painting
 app.get("/canvases/:canvasID", async (req, res) => {
   const id = req.params.canvasID;
@@ -88,6 +99,8 @@ app.get("/canvases/:canvasID", async (req, res) => {
   // console.log(canvas);
   res.render("canvas/show.ejs", { canvas, id });
 });
+
+
 
 // delete painting
 app.delete("/canvases/:canvasID", async (req, res) => {
@@ -97,10 +110,24 @@ app.delete("/canvases/:canvasID", async (req, res) => {
   res.redirect("/canvases");
 });
 
+
+
 // run server
 app.listen(3030, () => {
   //   console.log(`Listening on port 3030`);
 });
+
+
+///////////////////////////
+// end of mvp
+///////////////////////////
+
+
+
+
+
+
+
 
 ///////////////////////////
 // FUNCTIONS
@@ -150,7 +177,7 @@ async function createAiImage(
 ) {
   const prompt = `Generate an image in the style of ${style}. The main color of the image should be ${mainColor}. The dimensions of the image should be ${dimensions} orientation. The medium used should be ${medium}. The image should be titled "${title}" and described as "${description}". Ensure the image captures the essence of the specified style, medium, and color while adhering to the given title and description.`;
   const payload = {
-    model: "dalle-2",
+    model: "dall-e-3",
     prompt: prompt,
     n: 1,
     size: "1024x1024",
@@ -167,10 +194,20 @@ async function createAiImage(
       payload,
       headers
     );
-    const image_url = response.data[0].url;
-    return image_url.toString();
+
+    if (response.data && response.data.data && response.data.data.length > 0) {
+      const imageUrl = response.data.data[0].url;
+      return imageUrl.toString();
+    } else {
+      console.error("No image URL found in the response");
+      return null;
+    }
   } catch (error) {
-    console.log(`Error trying to generate image: `, error);
+    console.error(
+      `Error trying to generate image: `,
+      error.response ? error.response.data : error.message
+    );
+    return null;
   }
 }
 
