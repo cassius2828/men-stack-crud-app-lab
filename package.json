@@ -11,12 +11,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.588.0",
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "method-override": "^3.0.0",
     "mongoose": "^8.4.1",
+    "multer": "^1.4.5-lts.1",
     "openai": "^4.47.3"
   }
 }

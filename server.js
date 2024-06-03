@@ -3,20 +3,45 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
 const CanvasModel = require("./models/canvas");
-
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const axios = require("axios");
 
 // server setup
 const app = e();
 // env setup
 dotenv.config();
+// mongoDB
+const DB_URI = process.env.DB_URI;
+// openAI DALL-E
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-console.log(OPENAI_API_KEY);
+// AWS S3 BUCKET
+const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+const AWS_REGION = process.env.AWS_REGION;
+const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
+console.log(
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY,
+  AWS_REGION,
+  S3_BUCKET_NAME
+
+);
+// aws s3 setups
+const upload = multer({ dest: "uploads/" });
+const s3Client = new S3Client({
+  region: AWS_REGION,
+  credentials: {
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  },
+});
+
 ///////////////////////////
 // Connect to MongoDB
 ///////////////////////////
-const DB_URI = process.env.DB_URI;
 
 async function connect() {
   await mongoose.connect(DB_URI);
@@ -44,7 +69,6 @@ app.get("/", (req, res) => {
   res.render("home/index.ejs");
 });
 
-
 // get all paintings
 app.get("/canvases", async (req, res) => {
   const allCanvases = await CanvasModel.find({});
@@ -52,23 +76,23 @@ app.get("/canvases", async (req, res) => {
   res.render("canvas/index.ejs", { allCanvases });
 });
 
-
 //   view page of creaqting a new painting
 app.get("/canvases/new", (req, res) => {
   res.render("canvas/new.ejs");
 });
 
-
-
 //   create new painting
 app.post("/canvases/new", async (req, res) => {
   const newCanvasData = await destructureReqBody(req.body);
   const newCanvas = await CanvasModel.create(newCanvasData);
+  // actions to ensure our db gets the permanent link for the images
+  await replaceTempUrlWithS3Url(req, res, newCanvas._id);
   console.log(newCanvas);
   res.redirect("/canvases");
 });
 
-
+// uploads temp url from openai to server then s3 bucket
+app.post("/upload", upload.single("file"));
 
 //   get single painting
 app.get("/canvases/:canvasID/edit", async (req, res) => {
@@ -77,7 +101,6 @@ app.get("/canvases/:canvasID/edit", async (req, res) => {
   // console.log(canvas);
   res.render("canvas/edit.ejs", { canvas, id });
 });
-
 
 //   update painting
 app.put("/canvases/:canvasID/edit", async (req, res) => {
@@ -91,7 +114,6 @@ app.put("/canvases/:canvasID/edit", async (req, res) => {
   res.redirect(`/canvases/${id}`);
 });
 
-
 //   get single painting
 app.get("/canvases/:canvasID", async (req, res) => {
   const id = req.params.canvasID;
@@ -99,8 +121,6 @@ app.get("/canvases/:canvasID", async (req, res) => {
   // console.log(canvas);
   res.render("canvas/show.ejs", { canvas, id });
 });
-
-
 
 // delete painting
 app.delete("/canvases/:canvasID", async (req, res) => {
@@ -110,24 +130,14 @@ app.delete("/canvases/:canvasID", async (req, res) => {
   res.redirect("/canvases");
 });
 
-
-
 // run server
 app.listen(3030, () => {
   //   console.log(`Listening on port 3030`);
 });
 
-
 ///////////////////////////
 // end of mvp
 ///////////////////////////
-
-
-
-
-
-
-
 
 ///////////////////////////
 // FUNCTIONS
@@ -194,7 +204,7 @@ async function createAiImage(
       payload,
       headers
     );
-
+    // ! review this
     if (response.data && response.data.data && response.data.data.length > 0) {
       const imageUrl = response.data.data[0].url;
       return imageUrl.toString();
@@ -208,6 +218,60 @@ async function createAiImage(
       error.response ? error.response.data : error.message
     );
     return null;
+  }
+}
+
+// download image to server
+async function downloadImage(url, dest) {
+  const response = await axios({
+    url,
+    responseType: "stream",
+  });
+  return new Promise((resolve, reject) => {
+    const writer = fs.createWriteStream(dest);
+    response.data.pipe(writer);
+    writer.on("finish", resolve);
+    writer.on("error", reject);
+  });
+}
+
+// action to replace the tempUrl with a permanent url from s3 bucket
+async function replaceTempUrlWithS3Url(req, res, id) {
+  const { tempUrl } = req.body;
+
+  const fileName = `image_${Date.now()}.png`;
+  const filePath = path.join(__dirname, "uploads", fileName);
+
+  try {
+    // downloads image from temp url
+    await downloadImage(tempUrl, filePath);
+
+    // uploads the downloaded image to s3
+    const uploadParams = {
+      Bucket: S3_BUCKET_NAME,
+      Key: fileName,
+      Body: fs.createReadStream(filePath),
+      ACL: "public-read",
+    };
+
+    s3Client.upload(uploadParams, async (err, data) => {
+      // cleans up local file
+      fs.unlinkSync(filePath);
+      if (err) {
+        console.error(`Error uploading to S3: ${err}`);
+        return res.status(500).json({ error: "Failed to upload to S3" });
+      }
+      // save the permanent URL in database
+      const newImageUrl = `https://${S3_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${fileName}`;
+      const updatedCanvasWithNewUrl = await CanvasModel.findByIdAndUpdate(id, {
+        img: newImageUrl,
+      });
+      console.log("updated canvas with new url", updatedCanvasWithNewUrl);
+    });
+  } catch (error) {
+    console.error(
+      `Error updating document with permanent link from s3 bucket: ${error}`
+    );
   }
 }
 
