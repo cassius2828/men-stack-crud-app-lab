@@ -1,11 +1,20 @@
 <%- include('../partials/meta.ejs') %>
     <h1>Your Galleries</h1>
     <ul class="canvas-container">
+        <% if (allCanvases.length === 0) { %>
+            <div class="empty-gall-create">
+                <h2>You do not have any cavnases that fit this category... but you can change that right now!</h2>
+         <button> 
+            <a class="btn" href="/canvases/new">Create New Canvas</a>
+         </button> 
+            </div>
+        
+        <% } %>
         <% allCanvases.forEach(canvas => { %>
             <li class="canvas-item">
                 <a class="canvas-link" href="/canvases/<%= canvas._id %>"><div class="canvas-title"><%= canvas.title %></div></a>
                 <div class="canvas-attribute">Style: <span><%= canvas.style %></span></div>
-                <div class="canvas-attribute">Main Color: <span><%= canvas.mainColor %></span></div>
+                <div class="canvas-attribute">Main Color: <span><%= canvas.color %></span></div>
                 <div class="canvas-attribute">Dimensions: <span><%= canvas.dimensions %></span></div>
                 <div class="canvas-attribute">Description: <span><%= canvas.description %></span></div>
                 <div class="canvas-attribute">Medium: <span><%= canvas.medium %></span></div>
@@ -36,8 +45,8 @@
         <button>Search</button>
         </form>
 <!-- color -->
-        <form action="/canvases/filter/color" method="GET">
-        <select id="mainColor" name="mainColor" required >
+        <form action="/canvases/filter/color/" method="GET">
+        <select id="color" name="color" required >
             <option value="" disabled selected>Filter By Color:</option>
             <option value="no-filter">No Filter</option>
             <option value="red">Red</option>
@@ -55,7 +64,6 @@
             <option value="magenta">Magenta</option>
             <option value="lime">Lime</option>
             <option value="indigo">Indigo</option>
-            <option value="violet">Violet</option>
             <option value="gold">Gold</option>
             <option value="silver">Silver</option>
             <option value="beige">Beige</option>
@@ -64,7 +72,7 @@
         <button>Search</button>
     </form>
 <!-- title -->
-    <form action="/canvases/filter/title" method="GET">
+    <form action="/canvases/filter/title/" method="GET">
         <select id="titleFilter" name="title" required>
             <option value="" disabled selected>Filter By Title:</option>
             <option value="a-z">A to Z</option>

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const canvasSchema = new mongoose.Schema({
   style: String,
   img: String,
-  mainColor: String,
+  color: String,
   dimensions: String,
   title: String,
   description: String,

@@ -19,7 +19,9 @@ const index = async (req, res) => {
 const filter = async (req, res) => {
   const allCanvases = await CanvasModel.find({});
   const { filterBy } = req.params;
-  const specificFilter = req.query.style;
+  const specificFilter = req.query[filterBy];
+  console.log(filterBy)
+  console.log(specificFilter)
 
   const filteredCanvases = allCanvases.filter(
     (canvas) => canvas[filterBy] === specificFilter

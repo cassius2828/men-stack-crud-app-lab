@@ -37,6 +37,7 @@ h1 {
 /* /////////////////////////// */
 .navbar {
   position: fixed;
+  z-index: 10;
   top: 0;
   width: 100%;
   background-color: #222222;
@@ -45,7 +46,7 @@ h1 {
   display: flex;
   list-style-type: none;
   justify-content: space-between;
-  background-color: blue;
+  /* background-color: blue; */
 }
 .navbar .title {
   font-size: 2rem;
@@ -201,15 +202,19 @@ button[type="submit"]:hover {
   position: fixed;
 
   /* height of the navbar */
-  top: 6rem;
+  top: 5rem;
   left: 0;
   width: 10%;
   min-width: 10rem;
   height: 100svh;
-  background-color: red;
+  background-color: rgba(11, 11, 11, 0.699);
   transform: translateX(0);
   transition: 0.3s all ease;
 
+}
+
+.sidebar form {
+  margin: 2rem auto;
 }
 .sidebar.hide {
   transform: translateX(-120%);
@@ -220,7 +225,7 @@ button[type="submit"]:hover {
  
 font-size: 1.5rem;
   right: -25rem;
-  top:.5rem;
+  top:1.5rem;
 
 }
 .hamburger-container {
@@ -229,6 +234,7 @@ font-size: 1.5rem;
   height: 25px;
 
   right: -14rem;
+  top:1rem;
   cursor: pointer;
 }
 .bar {
@@ -319,12 +325,24 @@ font-size: 1.5rem;
 /* /////////////////////////// */
 /* canvas */
 /* /////////////////////////// */
+
+.empty-gall-create{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.empty-gall-create button {
+  margin: 6rem auto;
+  position: relative;
+  left: -10%
+}
 .canvas-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
   list-style: none;
-  background-color: yellow;
+  /* background-color: yellow; */
   width: 90%;
   margin-left: auto;
   gap: 2rem;
