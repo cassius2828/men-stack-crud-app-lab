@@ -26,6 +26,9 @@ app.use(e.urlencoded({ extended: false }));
 app.use(e.static(path.join(__dirname, "public")));
 // Override with POST having ?_method=PUT
 app.use(methodOverride("_method"));
+
+
+// app.use('/canvases', canvasesCtrl)
 ///////////////////////////
 // Landing Page
 ///////////////////////////
