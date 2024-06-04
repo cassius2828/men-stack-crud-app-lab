@@ -1,5 +1,5 @@
 <%- include('../partials/meta.ejs') %>
-    <h1>index painting page</h1>
+    <h1>Your Galleries</h1>
     <ul class="canvas-container">
         <% allCanvases.forEach(canvas => { %>
             <li class="canvas-item">
@@ -14,5 +14,53 @@
             </li>
         <% }) %>
     </ul>
+    <aside class="sidebar hide">
+        <div class="hamburger-container"><div class="bar"></div></div>
+        <span>filter gallery</span>
+        <select id="style" name="style" required>
+            <option value="" disabled selected>Filter By Style:</option>
+            <option value="no-filter">No Filter</option>
+            <option value="abstract">Abstract</option>
+            <option value="realism">Realism</option>
+            <option value="impressionism">Impressionism</option>
+            <option value="expressionism">Expressionism</option>
+            <option value="cubism">Cubism</option>
+            <option value="surrealism">Surrealism</option>
+            <option value="pop-art">Pop Art</option>
+            <option value="modernism">Modernism</option>
+            <option value="minimalism">Minimalism</option>
+            <option value="digital-art">Digital Art</option>
+        </select>
+        <select id="mainColor" name="mainColor" required>
+            <option value="" disabled selected>Filter By Color:</option>
+            <option value="no-filter">No Filter</option>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+            <option value="yellow">Yellow</option>
+            <option value="orange">Orange</option>
+            <option value="purple">Purple</option>
+            <option value="pink">Pink</option>
+            <option value="brown">Brown</option>
+            <option value="black">Black</option>
+            <option value="white">White</option>
+            <option value="gray">Gray</option>
+            <option value="cyan">Cyan</option>
+            <option value="magenta">Magenta</option>
+            <option value="lime">Lime</option>
+            <option value="indigo">Indigo</option>
+            <option value="violet">Violet</option>
+            <option value="gold">Gold</option>
+            <option value="silver">Silver</option>
+            <option value="beige">Beige</option>
+            <option value="turquoise">Turquoise</option>
+        </select>
+        <select id="mainColor" name="mainColor" required>
+            <option value="" disabled selected>Filter By Title:</option>
+            <option value="a-z">A to Z</option>
+            <option value="z-a">Z to A</option>
+          
+        </select>
+    </aside>
 </body>
 </html>

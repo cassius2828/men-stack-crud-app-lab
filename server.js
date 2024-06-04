@@ -73,6 +73,7 @@ app.get("/", (req, res) => {
 app.get("/canvases", async (req, res) => {
   const allCanvases = await CanvasModel.find({});
   // console.log(allCanvases)
+  
   res.render("canvas/index.ejs", { allCanvases });
 });
 

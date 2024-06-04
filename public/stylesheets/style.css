@@ -28,6 +28,7 @@ h1 {
   text-align: center;
   font-size: 3rem;
   margin: 4rem 0;
+  padding-top: 6rem;
   text-transform: capitalize;
 }
 
@@ -35,24 +36,25 @@ h1 {
 /* Navigation */
 /* /////////////////////////// */
 .navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
   background-color: #222222;
   padding: 1rem 2rem;
   margin-bottom: 2rem;
   display: flex;
   list-style-type: none;
   justify-content: space-between;
-
+  background-color: blue;
 }
 .navbar .title {
-  font-size: 3rem;
+  font-size: 2rem;
   margin-bottom: 4rem;
 }
 .nav-list {
   list-style-type: none;
   display: flex;
   justify-content: flex-end;
-
-  
 }
 
 .nav-item {
@@ -63,7 +65,7 @@ h1 {
   color: #f2f2f2;
   text-decoration: none;
   font-weight: bold;
-  font-size: 1.6rem;
+  font-size: 1rem;
 }
 
 .nav-link:hover {
@@ -128,14 +130,15 @@ button[type="submit"]:hover {
 /* Landing Page */
 /* /////////////////////////// */
 #landing .bg {
-  background: 
-    linear-gradient(to right, 
-      rgba(0, 0, 0, .9) 0%, 
-      rgba(0, 0, 0, .9) 20%, 
- 
-      rgba(0, 0, 0, .8) 40%, 
-      rgba(0, 0, 0, 0.5) 60%, 
-      rgba(0, 0, 0, 0) 100%),
+  background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.9) 20%,
+
+      rgba(0, 0, 0, 0.8) 40%,
+      rgba(0, 0, 0, 0.5) 60%,
+      rgba(0, 0, 0, 0) 100%
+    ),
     url("/images/hero-surreal.webp");
   background-size: cover;
   background-position: center;
@@ -167,6 +170,7 @@ button[type="submit"]:hover {
   justify-content: center;
   align-items: center;
   margin: 2rem 0;
+
   /* height: 80vh; */
 }
 
@@ -181,11 +185,94 @@ button[type="submit"]:hover {
   background-color: #222222;
 }
 .show-container.edit {
-  display: flex; flex-direction: column-reverse; justify-content: center; align-items: center;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+  align-items: center;
 }
 .show-container.edit form {
   margin: 0;
 }
+
+/* /////////////////////////// */
+/* sidebar */
+/* /////////////////////////// */
+.sidebar {
+  position: fixed;
+
+  /* height of the navbar */
+  top: 6rem;
+  left: 0;
+  width: 10%;
+  min-width: 10rem;
+  height: 100svh;
+  background-color: red;
+  transform: translateX(0);
+  transition: 0.3s all ease;
+
+}
+.sidebar.hide {
+  transform: translateX(-120%);
+}
+
+.sidebar span {
+  position: absolute;
+ 
+font-size: 1.5rem;
+  right: -25rem;
+  top:.5rem;
+
+}
+.hamburger-container {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+
+  right: -14rem;
+  cursor: pointer;
+}
+.bar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f2f2f2;
+  width: 25px;
+  height: 2px;
+  transition: 0.3s all ease;
+}
+.bar::before,
+.bar::after {
+  content: "";
+  position: absolute;
+  background-color: #f2f2f2;
+  width: 25px;
+  height: 2px;
+  transition: 0.3s all ease;
+}
+
+.bar::before {
+  top: -6px;
+}
+.bar::after {
+  top: 6px;
+}
+
+/* Rotate bars when .close class is added */
+.bar.close::before {
+  transform: rotate(45deg);
+  top: 0;
+}
+
+.bar.close::after {
+  transform: rotate(-45deg);
+  top: 0;
+}
+
+.bar.close {
+  background-color: transparent; /* Hide the middle bar */
+}
+
 /* /////////////////////////// */
 /* btns */
 /* /////////////////////////// */
@@ -237,6 +324,9 @@ button[type="submit"]:hover {
   flex-wrap: wrap;
   justify-content: space-around;
   list-style: none;
+  background-color: yellow;
+  width: 90%;
+  margin-left: auto;
   gap: 2rem;
 }
 
@@ -280,11 +370,19 @@ button[type="submit"]:hover {
   display: block;
 }
 
-
 /* MEDIA QUIERIES */
 
-@media (min-width:768px){
+@media (min-width: 768px) {
+  .navbar .title {
+    font-size: 3rem;
+  }
+  .nav-link {
+    font-size: 1.6rem;
+  }
+
   .show-container.edit {
-    display: flex; flex-direction: row; justify-content: center; 
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
   }
 }
