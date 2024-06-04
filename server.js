@@ -77,11 +77,6 @@ app.get("/canvases", async (req, res) => {
   res.render("canvas/index.ejs", { allCanvases });
 });
 
-app.get("/canvases/filter", (req, res) => {
-  console.log("filter hello");
-  res.send("hello filter");
-});
-
 // filtered canvases
 app.get("/canvases/filter/:filterBy", async (req, res) => {
   // get all canvases
@@ -97,10 +92,16 @@ app.get("/canvases/filter/:filterBy", async (req, res) => {
     (canvas) => {
       console.log(canvas[filterBy], " <-- canvas filter by");
       console.log(specificFilter, " <-- specificFilter");
+
       return canvas[filterBy] === specificFilter;
     }
   );
   console.log(filteredCanvases, " <-- filtered canvases");
+
+  // if no filter is chosen, redirect to the original page showing all canvases
+  if (specificFilter === "no-filter") {
+    return res.redirect("/canvases");
+  }
   // give the value of the filtered canvases to the ejs
   res.render("canvas/index.ejs", { allCanvases: filteredCanvases });
 });
