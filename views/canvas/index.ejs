@@ -17,7 +17,9 @@
     <aside class="sidebar hide">
         <div class="hamburger-container"><div class="bar"></div></div>
         <span>filter gallery</span>
-        <select id="style" name="style" required>
+        <!-- style -->
+        <form action="/canvases/filter/style/" method="GET">
+           <select id="style" name="style" required>
             <option value="" disabled selected>Filter By Style:</option>
             <option value="no-filter">No Filter</option>
             <option value="abstract">Abstract</option>
@@ -31,7 +33,11 @@
             <option value="minimalism">Minimalism</option>
             <option value="digital-art">Digital Art</option>
         </select>
-        <select id="mainColor" name="mainColor" required>
+        <button>Search</button>
+        </form>
+<!-- color -->
+        <form action="/canvases/filter/color" method="GET">
+        <select id="mainColor" name="mainColor" required >
             <option value="" disabled selected>Filter By Color:</option>
             <option value="no-filter">No Filter</option>
             <option value="red">Red</option>
@@ -55,12 +61,17 @@
             <option value="beige">Beige</option>
             <option value="turquoise">Turquoise</option>
         </select>
-        <select id="mainColor" name="mainColor" required>
+        <button>Search</button>
+    </form>
+<!-- title -->
+    <form action="/canvases/filter/title" method="GET">
+        <select id="titleFilter" name="title" required>
             <option value="" disabled selected>Filter By Title:</option>
             <option value="a-z">A to Z</option>
             <option value="z-a">Z to A</option>
-          
         </select>
+        <button>Search</button>
+    </form>
     </aside>
 </body>
 </html>

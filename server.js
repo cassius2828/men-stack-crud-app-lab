@@ -73,8 +73,36 @@ app.get("/", (req, res) => {
 app.get("/canvases", async (req, res) => {
   const allCanvases = await CanvasModel.find({});
   // console.log(allCanvases)
-  
+
   res.render("canvas/index.ejs", { allCanvases });
+});
+
+app.get("/canvases/filter", (req, res) => {
+  console.log("filter hello");
+  res.send("hello filter");
+});
+
+// filtered canvases
+app.get("/canvases/filter/:filterBy", async (req, res) => {
+  // get all canvases
+  const allCanvases = await CanvasModel.find({});
+  // get the filterby from the url
+  const { filterBy } = req.params;
+  // get the specific filter from the req query
+  const specificFilter = req.query.style;
+  console.log(specificFilter, "why are you undefined?");
+  // filter the canvases
+  const filteredCanvases = allCanvases.filter(
+    // ex: if canvas.syle === abstract
+    (canvas) => {
+      console.log(canvas[filterBy], " <-- canvas filter by");
+      console.log(specificFilter, " <-- specificFilter");
+      return canvas[filterBy] === specificFilter;
+    }
+  );
+  console.log(filteredCanvases, " <-- filtered canvases");
+  // give the value of the filtered canvases to the ejs
+  res.render("canvas/index.ejs", { allCanvases: filteredCanvases });
 });
 
 //   view page of creaqting a new painting
@@ -100,7 +128,7 @@ app.get("/canvases/:canvasID/edit", async (req, res) => {
   const id = req.params.canvasID;
   const canvas = await CanvasModel.findById(id);
   // console.log(canvas);
-  res.render("canvas/edit.ejs", { canvas, id,});
+  res.render("canvas/edit.ejs", { canvas, id });
 });
 
 //   update painting | only edit title and description
@@ -110,8 +138,11 @@ app.put("/canvases/:canvasID/edit", async (req, res) => {
 
   const { title, description } = req.body;
 
-  const updatedCanvas = await CanvasModel.findByIdAndUpdate(id,{ title, description });
-console.log(updatedCanvas)
+  const updatedCanvas = await CanvasModel.findByIdAndUpdate(id, {
+    title,
+    description,
+  });
+  console.log(updatedCanvas);
   res.redirect(`/canvases/${id}`);
 });
 
