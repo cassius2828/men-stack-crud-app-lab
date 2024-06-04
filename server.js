@@ -22,13 +22,13 @@ const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const AWS_REGION = process.env.AWS_REGION;
 const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
-console.log(
-  AWS_ACCESS_KEY_ID,
-  AWS_SECRET_ACCESS_KEY,
-  AWS_REGION,
-  S3_BUCKET_NAME
+// console.log(
+//   AWS_ACCESS_KEY_ID,
+//   AWS_SECRET_ACCESS_KEY,
+//   AWS_REGION,
+//   S3_BUCKET_NAME
 
-);
+// );
 // aws s3 setups
 const upload = multer({ dest: "uploads/" });
 const s3Client = new S3Client({
@@ -99,18 +99,18 @@ app.get("/canvases/:canvasID/edit", async (req, res) => {
   const id = req.params.canvasID;
   const canvas = await CanvasModel.findById(id);
   // console.log(canvas);
-  res.render("canvas/edit.ejs", { canvas, id });
+  res.render("canvas/edit.ejs", { canvas, id,});
 });
 
-//   update painting
+//   update painting | only edit title and description
 app.put("/canvases/:canvasID/edit", async (req, res) => {
   // console.log("test update");
   const id = req.params.canvasID;
 
-  const updatedCanvasInfo = await destructureReqBody(req.body);
+  const { title, description } = req.body;
 
-  await CanvasModel.findByIdAndUpdate(id, updatedCanvasInfo);
-
+  const updatedCanvas = await CanvasModel.findByIdAndUpdate(id,{ title, description });
+console.log(updatedCanvas)
   res.redirect(`/canvases/${id}`);
 });
 
@@ -144,18 +144,15 @@ app.listen(3030, () => {
 ///////////////////////////
 async function destructureReqBody(reqBody) {
   const { style, mainColor, dimensions, title, description, medium } = reqBody;
-  const img = await createAiImage(
-    style,
-    mainColor,
-    dimensions,
-    medium,
-    title,
-    description
-  );
-  if (img) {
+  const selectedCanvas = await CanvasModel.findOne({
+    description: description,
+  });
+  // if there is an img present and the length of it is more than
+  //  0 then do NOT create a new img, use the original one
+  if (selectedCanvas.img && selectedCanvas.img.length > 0) {
     const newCanvasData = {
       style,
-      img,
+      img: selectedCanvas.img,
       mainColor,
       dimensions,
       title,
@@ -163,9 +160,20 @@ async function destructureReqBody(reqBody) {
       medium,
     };
     return newCanvasData;
-  } else {
+  }
+  // otherwise create a new img
+  else {
+    const img = await createAiImage(
+      style,
+      mainColor,
+      dimensions,
+      medium,
+      title,
+      description
+    );
     const newCanvasData = {
       style,
+      img,
       mainColor,
       dimensions,
       title,
@@ -198,7 +206,9 @@ async function createAiImage(
       Authorization: `Bearer ${OPENAI_API_KEY}`,
     },
   };
+  let isLoading = false;
   try {
+    isLoading = true;
     const response = await axios.post(
       "https://api.openai.com/v1/images/generations",
       payload,
@@ -218,6 +228,8 @@ async function createAiImage(
       error.response ? error.response.data : error.message
     );
     return null;
+  } finally {
+    isLoading = false;
   }
 }
 
@@ -238,39 +250,25 @@ async function downloadImage(url, dest) {
 // action to replace the tempUrl with a permanent url from s3 bucket
 async function replaceTempUrlWithS3Url(req, res, id) {
   const { tempUrl } = req.body;
-
   const fileName = `image_${Date.now()}.png`;
   const filePath = path.join(__dirname, "uploads", fileName);
-
   try {
-    // downloads image from temp url
     await downloadImage(tempUrl, filePath);
-
-    // uploads the downloaded image to s3
     const uploadParams = {
       Bucket: S3_BUCKET_NAME,
       Key: fileName,
       Body: fs.createReadStream(filePath),
       ACL: "public-read",
     };
-
-    s3Client.upload(uploadParams, async (err, data) => {
-      // cleans up local file
-      fs.unlinkSync(filePath);
-      if (err) {
-        console.error(`Error uploading to S3: ${err}`);
-        return res.status(500).json({ error: "Failed to upload to S3" });
-      }
-      // save the permanent URL in database
-      const newImageUrl = `https://${S3_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${fileName}`;
-      const updatedCanvasWithNewUrl = await CanvasModel.findByIdAndUpdate(id, {
-        img: newImageUrl,
-      });
-      console.log("updated canvas with new url", updatedCanvasWithNewUrl);
-    });
+    const data = await s3Client.send(new PutObjectCommand(uploadParams));
+    console.log(data);
+    const newImageUrl = `https://${S3_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${fileName}`;
+    await CanvasModel.findByIdAndUpdate({ _id: id, img: newImageUrl });
+    console.log("Updated canvas with new URL:", newImageUrl);
+    fs.unlinkSync(filePath); // Clean up local file
   } catch (error) {
     console.error(
-      `Error updating document with permanent link from s3 bucket: ${error}`
+      `Error updating document with permanent link from S3 bucket: ${error}`
     );
   }
 }

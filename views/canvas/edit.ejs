@@ -10,12 +10,16 @@
             <div class="canvas-attribute">Medium: <span><%= canvas.medium %></span></div>
             <img class="ai-img" src="<%= canvas.img %>" alt="unique ai generated image">
 
-     
         </div>
         
     </div>
           <form action="/canvases/<%= canvas._id %>/edit?_method=PUT" method="POST">
-        <%- include('../partials/form.ejs') %>
+      
+            <label for="title">Title</label>
+            <input id="title" name="title" type="text" value="<%= canvas.title %>" required><br>
+            
+            <label for="description">Description</label>
+            <input id="description" name="description" type="text" value="<%= canvas.description %>"><br>
             
                 <button type="submit" value="Submit">Update Your Artwork!</button>
             </form>
