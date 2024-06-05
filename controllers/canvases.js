@@ -2,15 +2,28 @@ const CanvasModel = require("../models/canvas");
 const destructureReqBody = require("../utils/destructureReqBody");
 const replaceTempUrlWithS3Url = require("../utils/replaceTempUrlWithS3Url");
 const multer = require("multer");
-
+const session = require("express-session");
+const e = require("express");
+const app = e();
 const upload = multer({ dest: "uploads/" });
-
+///////////////////////////
+// Set Up Cookies Sessions
+///////////////////////////
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 ///////////////////////////
 // get all canvases
 ///////////////////////////
 const index = async (req, res) => {
+  const specificFilter = false
+
   const allCanvases = await CanvasModel.find({});
-  res.render("canvas/index.ejs", { allCanvases });
+  res.render("canvas/index.ejs", { allCanvases, user: req.session.user,specificFilter });
 };
 
 ///////////////////////////
@@ -20,8 +33,8 @@ const filter = async (req, res) => {
   const allCanvases = await CanvasModel.find({});
   const { filterBy } = req.params;
   const specificFilter = req.query[filterBy];
-  console.log(filterBy)
-  console.log(specificFilter)
+  console.log(filterBy);
+  console.log(specificFilter);
 
   const filteredCanvases = allCanvases.filter(
     (canvas) => canvas[filterBy] === specificFilter
@@ -31,7 +44,10 @@ const filter = async (req, res) => {
     return res.redirect("/canvases");
   }
 
-  res.render("canvas/index.ejs", { allCanvases: filteredCanvases });
+  res.render("canvas/index.ejs", {
+    allCanvases: filteredCanvases,
+    user: req.session.user,specificFilter
+  });
 };
 
 ///////////////////////////

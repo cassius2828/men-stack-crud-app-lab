@@ -20,6 +20,7 @@ app.use(
   })
 );
 
+
 ///////////////////////////
 // Connect to MongoDB
 ///////////////////////////
@@ -51,8 +52,6 @@ app.use(methodOverride("_method"));
 ///////////////////////////
 // home page
 app.get("/", (req, res) => {
-  console.log(req.session, " <-- req.session");
-// includes cookie session as user
   res.render("home/index.ejs", { user: req.session.user });
 });
 

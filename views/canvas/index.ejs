@@ -1,5 +1,9 @@
 <%- include('../partials/meta.ejs') %>
-    <h1 class="galleries-title full">Your Galleries</h1>
+    <h1 class="galleries-title full"> <% if (user) { %>
+     <%= user.username %>'s
+    <% } %> <% if (specificFilter && specificFilter !== 'no-filter') { %>
+     <%= specificFilter %>
+    <% } %> Gallery</h1>
     <ul class="canvas-container full">
         <% if (allCanvases.length === 0) { %>
             <div class="empty-gall-create">

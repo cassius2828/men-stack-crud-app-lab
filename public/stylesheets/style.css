@@ -340,8 +340,8 @@ font-size: 1.5rem;
 }
 .empty-gall-create button {
   margin: 6rem auto;
-  position: relative;
-  left: -10%
+  
+ 
 }
 .canvas-container {
   display: flex;
