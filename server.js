@@ -2,31 +2,48 @@ const e = require("express");
 
 const methodOverride = require("method-override");
 const path = require("path");
-
-// canvas controller export
-const canvasesCtrl = require('./controllers/canvases')
+const session = require("express-session");
 
 // server setup
 const app = e();
 // env setup
 const dotenv = require("dotenv");
 dotenv.config();
+///////////////////////////
+// Set Up Cookies Sessions
+///////////////////////////
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 ///////////////////////////
 // Connect to MongoDB
 ///////////////////////////
 
 require("./config/db");
+app.use(e.urlencoded({ extended: false }));
+app.use(e.json());
+///////////////////////////
+// Canvas Router
+///////////////////////////
+const authRouter = require("./routes/authRoutes");
+const canvasRouter = require("./routes/canvasRoutes");
+
+app.use("/auth", authRouter);
+app.use("/canvases", canvasRouter);
 
 ///////////////////////////
 // Middleware
 ///////////////////////////
-app.use(e.urlencoded({ extended: false }));
+
 // serve static files from server
 app.use(e.static(path.join(__dirname, "public")));
 // Override with POST having ?_method=PUT
 app.use(methodOverride("_method"));
-
 
 // app.use('/canvases', canvasesCtrl)
 ///////////////////////////
@@ -34,24 +51,13 @@ app.use(methodOverride("_method"));
 ///////////////////////////
 // home page
 app.get("/", (req, res) => {
-  res.render("home/index.ejs");
+  console.log(req.session, " <-- req.session");
+// includes cookie session as user
+  res.render("home/index.ejs", { user: req.session.user });
 });
 
-///////////////////////////
-// Canvas Controllers
-///////////////////////////
-app.get("/canvases", canvasesCtrl.index);
-app.get("/canvases/filter/:filterBy", canvasesCtrl.filter);
-app.get("/canvases/new", canvasesCtrl.new);
-app.post("/canvases/new", canvasesCtrl.create);
-app.post("/upload", canvasesCtrl.upload);
-app.get("/canvases/:canvasID/edit", canvasesCtrl.showEdit);
-app.put("/canvases/:canvasID/edit", canvasesCtrl.edit);
-app.get("/canvases/:canvasID", canvasesCtrl.show);
-app.delete("/canvases/:canvasID", canvasesCtrl.remove);
-
+// app.post("/upload", canvasesCtrl.upload);
 // run server
 app.listen(3030, () => {
   //   console.log(`Listening on port 3030`);
 });
-

@@ -1,0 +1,20 @@
+<%- include('../partials/meta.ejs') %>
+    <h1>Register</h1>
+    <form action="/auth/register" method="POST">
+        <label for="username">username</label>
+        <input id="username" name="username" type="text">
+
+        <label for="password">password</label>
+        <input id="password" name="password" type="password">
+
+        <label for="confirmPassword">confirm password</label>
+        <input id="confirmPassword" name="confirmPassword" type="password">
+
+        <button type="submit">Register</button>
+    </form>
+
+    <div class="btn-container">
+        <a class="nav-link" href="/auth/login">Login to your an Account Here</a>
+   </div>
+</body>
+</html>
