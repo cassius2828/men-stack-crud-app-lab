@@ -47,10 +47,10 @@ router.post("/register", async (req, res) => {
   //   search db for existing user
   const findUser = await UserModel.findOne({ username: username });
   if (findUser) {
-    return res.send(`Username already exists`);
+    return alert(`Username already exists`);
   }
   if (confirmPassword !== req.body.password) {
-    return res.send(`Passwords do not match`);
+    return alert(`Passwords do not match`)
   }
   //   has the password
   const hashedPassword = bcrypt.hashSync(password, 10);

@@ -19,7 +19,14 @@ app.use(
     saveUninitialized: true,
   })
 );
+///////////////////////////
+// Middleware
+///////////////////////////
 
+// serve static files from server
+app.use(e.static(path.join(__dirname, "public")));
+// Override with POST having ?_method=PUT
+app.use(methodOverride("_method"));
 
 ///////////////////////////
 // Connect to MongoDB
@@ -37,14 +44,7 @@ const canvasRouter = require("./routes/canvasRoutes");
 app.use("/auth", authRouter);
 app.use("/canvases", canvasRouter);
 
-///////////////////////////
-// Middleware
-///////////////////////////
 
-// serve static files from server
-app.use(e.static(path.join(__dirname, "public")));
-// Override with POST having ?_method=PUT
-app.use(methodOverride("_method"));
 
 // app.use('/canvases', canvasesCtrl)
 ///////////////////////////
