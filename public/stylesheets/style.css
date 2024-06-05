@@ -352,8 +352,23 @@ font-size: 1.5rem;
   width: 90%;
   margin-left: auto;
   gap: 2rem;
+  transition: 0.2s ease all;
+ 
+
 }
 
+.canvas-container.full,.galleries-title.full {
+  width: 100%;
+  transition: 0.2s ease all;
+
+}
+
+.galleries-title {
+  width: 90%;
+  margin-left:auto;
+  transition: 0.2s ease all;
+
+}
 .canvas-item {
   width: 25%;
   min-width: 300px;
