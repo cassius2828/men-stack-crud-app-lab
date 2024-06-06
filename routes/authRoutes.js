@@ -2,7 +2,7 @@ const e = require("express");
 const UserModel = require("../models/user");
 const router = e.Router();
 const bcrypt = require("bcrypt");
-const app = e()
+const app = e();
 const session = require("express-session");
 
 ///////////////////////////
@@ -15,22 +15,23 @@ app.use(
     saveUninitialized: true,
   })
 );
+
 ///////////////////////////
-// get login
+// Routes
 ///////////////////////////
+
+// Get login
 router.get("/login", (req, res) => {
   res.render("auth/login.ejs");
 });
 
-///////////////////////////
-// post login
-///////////////////////////
+// Post login
 router.post("/login", async (req, res) => {
   const { username } = req.body;
   try {
     const user = await UserModel.findOne({ username: username });
     console.log(user, " <-- found the user");
-    // session obj
+    // Session object
     req.session.user = {
       username: user.username,
       _id: user._id,
@@ -42,22 +43,18 @@ router.post("/login", async (req, res) => {
   return res.send("Error logging in user");
 });
 
-///////////////////////////
-// get register
-///////////////////////////
+// Get register
 router.get("/register", (req, res) => {
   res.render("auth/register.ejs");
 });
 
-///////////////////////////
-// post register
-///////////////////////////
+// Post register
 router.post("/register", async (req, res) => {
-  // vars from req.body
+  // Vars from req.body
   const { username, confirmPassword } = req.body;
   let password = req.body.password;
 
-  //   search db for existing user
+  // Search DB for existing user
   const findUser = await UserModel.findOne({ username: username });
   if (findUser) {
     return alert(`Username already exists`);
@@ -65,22 +62,22 @@ router.post("/register", async (req, res) => {
   if (confirmPassword !== req.body.password) {
     return alert(`Passwords do not match`);
   }
-  //   has the password
+  // Hash the password
   const hashedPassword = bcrypt.hashSync(password, 10);
   password = hashedPassword;
 
-  // store info for new user
+  // Store info for new user
   const newUser = {
     username,
     password: password,
   };
 
   try {
-    // create new user with new password hash
+    // Create new user with new password hash
     await UserModel.create(newUser);
     console.log(newUser, " <-- found the newUser");
 
-    // session obj
+    // Session object
     req.session.user = {
       username: newUser.username,
       _id: newUser._id,
@@ -93,35 +90,25 @@ router.post("/register", async (req, res) => {
   return res.send("Error registering user");
 });
 
-// try to view profile page
+// Try to view profile page
 router.get("/profile", (req, res) => {
-
-  // // session obj
-  // req.session.user = {
-  //   username,
-  //   _id,
-  // };
-
   const id = req.session.user?._id;
   const username = req.session.user?.username;
   if (id) {
     return res.redirect(`/auth/profile/${username}`);
-    // return res.send(username)
   } else {
     return res.redirect(`/auth/login`);
   }
 });
 
-// view user profile page
+// View user profile page
 router.get("/profile/:username", async (req, res) => {
   const id = req.session.user?._id;
-
   const user = await UserModel.findById(id);
-
-  res.render("auth/profile", { username: user.username });
+  res.render("auth/profile.ejs", { username: user.username });
 });
 
-
+// Logout
 router.get("/logout", (req, res) => {
   req.session.destroy();
   res.redirect("/");

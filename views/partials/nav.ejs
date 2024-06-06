@@ -1,16 +1,28 @@
-<nav class="navbar"> <li class="nav-item">
-        <a class="nav-link title" href="/">Artistry AI</a>
-      </li>   
-    <ul class="nav-list">
-     
-      <li class="nav-item">
-        <a class="nav-link" href="/canvases">View Canvases</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/canvases/new">Create New Canvas</a>
-      </li>  <li class="nav-item">
-        <a class="nav-link" href="/auth/profile">User Profile</a>
-      </li>
-    </ul>
-
-  </nav>
+<nav class="navbar">
+  <li class="nav-item">
+    <a class="nav-link title" href="/">Artistry AI</a>
+  </li>
+  <ul class="nav-list">
+    <% if (user) { %>
+    <li class="nav-item">
+      <a class="nav-link" href="/canvases">View Canvases</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/canvases/new">Create New Canvas</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/auth/profile">User Profile</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/auth/logout">Sign Out</a>
+    </li>
+    <% } else { %>
+    <li class="nav-item">
+      <a class="nav-link" href="/auth/register">Register</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/auth/login">Sign In</a>
+    </li>
+    <% } %>
+  </ul>
+</nav>

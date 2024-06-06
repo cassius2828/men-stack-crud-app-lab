@@ -20,24 +20,31 @@ const index = async (req, res) => {
 // filtered canvases
 ///////////////////////////
 const filter = async (req, res) => {
-  const allCanvases = await CanvasModel.find({});
+  let allCanvases = await CanvasModel.find({});
   // middleware to add specific filter to ejs
   const { specificFilter } = res.locals;
   console.log(specificFilter);
   const { filterBy } = req.params;
 
-  const filteredCanvases = allCanvases.filter(
-    (canvas) => canvas[filterBy] === specificFilter
-  );
-
-  if (specificFilter === "no-filter") {
+  // need to work on this logic for abc
+  if (specificFilter === "a-z") {
+    allCanvases.sort((a, b) => a["title"].localeCompare(b["title"]));
+  } else if (specificFilter === "z-a") {
+    allCanvases.sort((a, b) => b["title"].localeCompare(a["title"]));
+  } else if (specificFilter === "no-filter") {
     return res.redirect("/canvases");
+  } else {
+    allCanvases = allCanvases.filter(
+      (canvas) => canvas[filterBy] === specificFilter
+    );
   }
 
   res.render("canvas/index.ejs", {
-    allCanvases: filteredCanvases,
+    allCanvases,
   });
 };
+
+
 
 ///////////////////////////
 // render the new canvas page

@@ -435,6 +435,50 @@ font-size: 1.5rem;
   display: block;
 }
 
+    /* Welcome Container */
+    .welcome-container {
+      max-width: 80%;
+      margin: 8rem auto;
+      padding: 2rem;
+      background-color: #222222;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0px 0px 7px 0px rgba(52, 152, 219, 1);
+    }
+
+    .welcome-container h1 {
+      text-align: center;
+      font-size: 3rem;
+      color: #3498db;
+      margin-bottom: 2rem;
+      padding-top:0
+    }
+
+    .welcome-container p {
+      font-size: 1.6rem;
+      line-height: 2.5rem;
+      margin-bottom: 2rem;
+      color: #f2f2f2;
+      text-align:  center;
+    }
+
+    .welcome-container ul {
+      list-style-type: none;
+      padding-left: 2rem;
+      margin-bottom: 2rem;
+      color: #f2f2f2;
+    }
+
+    .welcome-container ul li {
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .welcome-container ul li strong {
+      color: #3498db;
+      font-size: 1.65rem;
+    }
+
 /* MEDIA QUIERIES */
 
 @media (min-width: 768px) {
