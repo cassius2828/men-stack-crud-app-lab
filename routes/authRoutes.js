@@ -106,6 +106,7 @@ router.get("/profile", (req, res) => {
   const username = req.session.user?.username;
   if (id) {
     return res.redirect(`/auth/profile/${username}`);
+    // return res.send(username)
   } else {
     return res.redirect(`/auth/login`);
   }
